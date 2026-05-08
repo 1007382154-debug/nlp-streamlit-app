@@ -1,0 +1,6 @@
+streamlit
+jieba
+snownlp
+zhconv
+pandas
+matplotlib
