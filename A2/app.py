@@ -8,10 +8,14 @@ if 'google.protobuf' in sys.modules:
 
 # --- 核心修复：绕过 Windows 中文用户名导致的 SentencePiece C++ 底层路径加载崩溃 ---
 # 因为您的电脑用户名为 "王旭东"，SentencePiece 底层 C++ 代码在读取包含中文路径的文件时会报 OSErrer，
-# 因此我们强行将 HuggingFace 缓存和 NLTK 下载目录挂载到一个纯英文的 D 盘目录下！
+# 因此我们强行将 HuggingFace 缓存和 NLTK 下载目录挂载到一个合法的纯英文目录下。
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
-os.environ["HF_HOME"] = "D:\\nlp_models_cache\\huggingface"
-os.environ["NLTK_DATA"] = "D:\\nlp_models_cache\\nltk_data"
+if os.name == 'nt':  # Windows 系统下
+    os.environ["HF_HOME"] = "D:\\nlp_models_cache\\huggingface"
+    os.environ["NLTK_DATA"] = "D:\\nlp_models_cache\\nltk_data"
+else:  # Linux (Streamlit Cloud 云端环境) 下
+    os.environ["HF_HOME"] = "/tmp/huggingface"
+    os.environ["NLTK_DATA"] = "/tmp/nltk_data"
 
 import streamlit as st
 import spacy
@@ -35,7 +39,7 @@ def init_nlp_models():
     # 1. 自动检查/下载 Spacy 英文核心模型 (en_core_web_sm)
     try:
         spacy.util.get_package_path('en_core_web_sm')
-    except IOError:
+    except (IOError, ImportError, ModuleNotFoundError, OSError):
         st.warning("🔄 首次运行系统检测到缺失 en_core_web_sm 模型，正在为您自动下载，请稍候...")
         from spacy.cli import download as spacy_download
         spacy_download('en_core_web_sm')
