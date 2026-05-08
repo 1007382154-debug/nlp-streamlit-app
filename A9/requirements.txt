@@ -1,0 +1,7 @@
+streamlit
+transformers<4.46
+torch
+plotly
+pandas
+numpy<2.0.0
+xformers
