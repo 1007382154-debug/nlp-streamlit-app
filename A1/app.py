@@ -74,13 +74,10 @@ if user_input:
                 df_top5 = pd.DataFrame(top_5, columns=["词语", "频次"])
                 st.dataframe(df_top5, hide_index=True)
                 
-                # 绘制条形图
-                fig, ax = plt.subplots(figsize=(5, 3))
-                ax.bar(df_top5['词语'], df_top5['频次'], color='skyblue')
-                ax.set_title("Top 5 词频统计")
-                ax.set_xlabel("词语")
-                ax.set_ylabel("频次")
-                st.pyplot(fig)
+                # 去掉 matplotlib，改用 streamlit 原生图表
+                st.write("**Top 5 词频统计：**")
+                # 设置词语为索引，以便 st.bar_chart 直接作为 X 轴
+                st.bar_chart(df_top5.set_index('词语')['频次'])
             else:
                 st.write("未能提取到有效词语！")
         else:
@@ -163,22 +160,12 @@ if ambiguous_input:
     
     # 可视化分析
     st.subheader("算法表现可视化分析")
-    colA, colB = st.columns(2)
     
-    with colA:
-        # 分词数量对比
-        fig_cnt, ax_cnt = plt.subplots(figsize=(6, 4))
-        ax_cnt.bar(df_results["算法"], df_results["分词数量"], color="#f6c23e")
-        ax_cnt.set_title("各算法分词数量对比")
-        ax_cnt.tick_params(axis='x', rotation=45)
-        st.pyplot(fig_cnt)
-        
-    with colB:
-        # 耗时对比
-        fig_time, ax_time = plt.subplots(figsize=(6, 4))
-        ax_time.bar(df_results["算法"], df_results["耗时(ms)"], color="#1cc88a")
-        ax_time.set_title("各算法分词耗时对比 (ms)")
-        ax_time.tick_params(axis='x', rotation=45)
-        st.pyplot(fig_time)
+    # 改用 Streamlit 原生图表解决云端中文乱码问题
+    st.write("**各算法分词数量对比**")
+    st.bar_chart(df_results.set_index("算法")["分词数量"])
+    
+    st.write("**各算法分词耗时对比 (ms)**")
+    st.bar_chart(df_results.set_index("算法")["耗时(ms)"])
         
     st.info("**分析结论示例：**\n\nJieba精确模式和SnowNLP旨在找出最可能的一条切分路径，往往遇到歧义时切分可能不同；而Jieba的『全模式』扫描出了所有字典中存在的词组，因此分词数量会显著多于其他算法。")
