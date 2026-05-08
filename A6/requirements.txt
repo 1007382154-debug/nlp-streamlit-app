@@ -1,0 +1,6 @@
+streamlit
+nltk
+pandas
+torch
+transformers<4.46
+numpy<2.0.0
