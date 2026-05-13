@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🏠 财政部课题项目 - 首页导航")
+st.title("🏠 NLP项目 - 首页导航")
 st.markdown("---")
 st.markdown("欢迎访问项目演示平台。以下为您部署的各个子应用模块（A1-A9）的入口：")
 
